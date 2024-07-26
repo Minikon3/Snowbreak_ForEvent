@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Счетчики предметов</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: gray;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .counters-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .counter {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 10px;
+            padding: 20px;
+            text-align: center;
+            width: 200px;
+        }
+        .counter img {
+            width: 100%;
+            border-radius: 8px;
+        }
+        .counter h2 {
+            font-size: 18px;
+            margin: 10px 0;
+            color: #ff7f50;
+        }
+        .counter .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .counter button {
+            background: #ff7f50;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 0 10px;
+            padding: 10px;
+            transition: background-color 0.3s;
+        }
+        .counter button:focus {
+            outline: none;
+        }
+        .counter button:hover {
+            background-color: #e67340;
+        }
+        .counter span {
+            font-size: 18px;
+            margin: 0 10px;
+            color: #333;
+        }
+        .status {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="counters-container" id="requiredCounters"></div>
+    <div class="counters-container" id="availableCounters"></div>
+    <button id="resetButton" onclick="resetCounters()">Сбросить все счетчики</button>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const requiredCounterData = [
+                { id: 1, name: 'Требуется Glory', img: 'images/ZH.jpg', count: 0 },
+                { id: 2, name: 'Требуется Humility', img: 'images/SAL.jpg', count: 0 },
+                { id: 3, name: 'Требуется Justice', img: 'images/ZEL.jpg', count: 0 },
+                { id: 4, name: 'Требуется Purity', img: 'images/SIN.jpg', count: 0 },
+                { id: 5, name: 'Требуется Boldness', img: 'images/KR.jpg', count: 0 },
+                { id: 6, name: 'Требуется Intellect', img: 'images/BEL.jpg', count: 0 },
+                { id: 7, name: 'Требуется Courage', img: 'images/FIOL.jpg', count: 0 }
+            ];
+
+            const availableCounterData = [
+                { id: 1, name: 'Имеется Glory', img: 'images/ZH.jpg', count: 0 },
+                { id: 2, name: 'Имеется Humility', img: 'images/SAL.jpg', count: 0 },
+                { id: 3, name: 'Имеется Justice', img: 'images/ZEL.jpg', count: 0 },
+                { id: 4, name: 'Имеется Purity', img: 'images/SIN.jpg', count: 0 },
+                { id: 5, name: 'Имеется Boldness', img: 'images/KR.jpg', count: 0 },
+                { id: 6, name: 'Имеется Intellect', img: 'images/BEL.jpg', count: 0 },
+                { id: 7, name: 'Имеется Courage', img: 'images/FIOL.jpg', count: 0 }
+            ];
+
+            let savedRequiredCounters = JSON.parse(localStorage.getItem('requiredCounters')) || requiredCounterData;
+            let savedAvailableCounters = JSON.parse(localStorage.getItem('availableCounters')) || availableCounterData;
+
+            const updateLocalStorage = (key, data) => {
+                localStorage.setItem(key, JSON.stringify(data));
+            };
+
+            const createCounter = (counter, type) => {
+                const counterDiv = document.createElement('div');
+                counterDiv.className = 'counter';
+                counterDiv.innerHTML = `
+                    <img src="${counter.img}" alt="${counter.name}">
+                    <h2>${counter.name}</h2>
+                    <div class="controls">
+                        <button onclick="changeCount(${counter.id}, -1, '${type}')">-</button>
+                        <span id="${type}-count-${counter.id}">${counter.count}</span>
+                        <button onclick="changeCount(${counter.id}, 1, '${type}')">+</button>
+                    </div>
+                    <div class="status" id="${type}-status-${counter.id}"></div>
+                `;
+                return counterDiv;
+            };
+
+            const requiredCountersContainer = document.getElementById('requiredCounters');
+            savedRequiredCounters.forEach(counter => {
+                requiredCountersContainer.appendChild(createCounter(counter, 'required'));
+            });
+
+            const availableCountersContainer = document.getElementById('availableCounters');
+            savedAvailableCounters.forEach(counter => {
+                availableCountersContainer.appendChild(createCounter(counter, 'available'));
+            });
+
+            window.changeCount = (id, delta, type) => {
+                let counters, key;
+                if (type === 'required') {
+                    counters = savedRequiredCounters;
+                    key = 'requiredCounters';
+                } else {
+                    counters = savedAvailableCounters;
+                    key = 'availableCounters';
+                }
+
+                const counter = counters.find(counter => counter.id === id);
+                counter.count = Math.max(0, counter.count + delta);
+                document.getElementById(`${type}-count-${id}`).textContent = counter.count;
+                updateLocalStorage(key, counters);
+
+                updateStatus(id);
+            };
+
+            const updateStatus = (id) => {
+                const requiredCount = savedRequiredCounters.find(counter => counter.id === id).count;
+                const availableCount = savedAvailableCounters.find(counter => counter.id === id).count;
+                const statusElement = document.getElementById(`required-status-${id}`);
+
+                if (availableCount >= requiredCount) {
+                    statusElement.textContent = 'Предметов достаточно';
+                    statusElement.style.color = 'green';
+                } else {
+                    const needed = requiredCount - availableCount;
+                    statusElement.textContent = `Требуется еще: ${needed}`;
+                    statusElement.style.color = 'red';
+                }
+            };
+
+            const resetCounters = () => {
+                localStorage.removeItem('requiredCounters');
+                localStorage.removeItem('availableCounters');
+                savedRequiredCounters = requiredCounterData;
+                savedAvailableCounters = availableCounterData;
+                requiredCountersContainer.innerHTML = '';
+                availableCountersContainer.innerHTML = '';
+                savedRequiredCounters.forEach(counter => {
+                    requiredCountersContainer.appendChild(createCounter(counter, 'required'));
+                });
+                savedAvailableCounters.forEach(counter => {
+                    availableCountersContainer.appendChild(createCounter(counter, 'available'));
+                });
+                savedRequiredCounters.forEach(counter => updateStatus(counter.id));
+                savedAvailableCounters.forEach(counter => updateStatus(counter.id));
+            };
+
+        window.resetCounters = resetCounters;
+
+        savedRequiredCounters.forEach(counter => updateStatus(counter.id));
+        savedAvailableCounters.forEach(counter => updateStatus(counter.id));
+        });
+    </script>
+</body>
+</html>
