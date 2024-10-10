@@ -166,6 +166,21 @@
         .character input {
             margin-right: 10px;
         }
+        #selectMandatoryCharactersButton {
+            background: #ff7f50;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 5px;
+            padding: 10px 20px;
+            transition: background-color 0.3s;
+        }
+        #selectMandatoryCharactersButton:hover {
+            background-color: #e67340;
+        }
+
     </style>
 </head>
 <body>
@@ -216,19 +231,23 @@
             const characterData = [
                 { name: 'Acacia - Kaguya', items: [{ id: 4, count: 1 }, { id: 6, count: 2 }] },
                 { name: 'Fritia - Hush', items: [{ id: 3, count: 1 }, { id: 4, count: 1 }, { id: 6, count: 1 }] },
-                { name: 'Lyfe - Wild Hunt', items: [{ id: 1, count: 1 }, { id: 2, count: 1 }, { id: 5, count: 1 }] },
+                { name: 'Lyfe - Wild Hunt', items: [{ id: 2, count: 1 }, { id: 3, count: 1 }, { id: 5, count: 1 }] },
                 { name: 'Marian - Swift', items: [{ id: 2, count: 2 }, { id: 6, count: 1 }] },
                 { name: 'Haru - Absconditus', items: [{ id: 1, count: 1 }, { id: 3, count: 2 }] },
                 { name: 'Cherno - Enigma', items: [{ id: 2, count: 1 }, { id: 7, count: 2 }] },
                 { name: 'Fenny - Coronet', items: [{ id: 1, count: 1 }, { id: 3, count: 1 }, { id: 7, count: 1 }] },
                 { name: 'Yao - Winter Solstice', items: [{ id: 5, count: 1 }, { id: 6, count: 1 }, { id: 7, count: 1 }] },
                 { name: 'Enya - Exuvia', items: [{ id: 2, count: 2 }, { id: 4, count: 1 }] },
+                { name: 'Mauxir - Shadow Ka', items: [{ id: 4, count: 1 }, { id: 6, count: 2 }] },
                 { name: 'Siris - Ksana', items: [{ id: 4, count: 2 }, { id: 7, count: 1 }] },
                 { name: 'Chenxing - Etheral Cloud', items: [{ id: 1, count: 2 }, { id: 4, count: 1 }] },
                 { name: 'Lyfe - Infinite Sight', items: [{ id: 2, count: 1 }, { id: 5, count: 2 }] },
                 { name: 'Katya - Blue Bolt', items: [{ id: 5, count: 2 }, { id: 7, count: 1 }] },
                 { name: 'Tess - The Magician', items: [{ id: 2, count: 2 }, { id: 7, count: 1 }] },
-                { name: 'Fenny - Starshine', items: [{ id: 1, count: 2 }, { id: 3, count: 1 }] }
+                { name: 'Fenny - Starshine', items: [{ id: 1, count: 2 }, { id: 3, count: 1 }] },
+                { name: 'Vidya - Agave', items: [{ id: 1, count: 1 }, { id: 5, count: 1 }, { id: 6, count: 1 }] },
+                { name: 'Marian - Riptide', items: [{ id: 2, count: 1 }, { id: 4, count: 1 }, { id: 7, count: 1 }] },
+                { name: 'Katya - Dawnwing', items: [{ id: 1, count: 1 }, { id: 5, count: 1 }, { id: 7, count: 1 }] }
             ];
 
             let savedRequiredCounters = JSON.parse(localStorage.getItem('requiredCounters')) || requiredCounterData;
